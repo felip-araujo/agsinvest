@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { API_URL } from "../services/ApiUrl";
 
 export function Cadastro() {
   const [tipoCadastro, setTipoCadastro] = useState("USER");
@@ -61,8 +62,8 @@ export function Cadastro() {
       setLoading(true);
 
       const endpoint = isUser
-        ? "http://localhost:3000/users"
-        : "http://localhost:3000/empresas";
+        ? `${API_URL}/users`
+        : `${API_URL}/empresas`;
 
       const payload = isUser
         ? {
