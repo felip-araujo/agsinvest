@@ -2,6 +2,8 @@ import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Link } from "react-router-dom";
+import { API_URL } from "../services/ApiUrl";
+
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -19,7 +21,7 @@ function Login() {
     try {
       setLoading(true);
 
-      const response = await fetch("http://localhost:3000/login", {
+      const response = await fetch(`${API_URL}/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
