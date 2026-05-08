@@ -4,7 +4,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { Link } from "react-router-dom";
 import { API_URL } from "../services/ApiUrl";
 
-
 function Login() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
@@ -45,11 +44,17 @@ function Login() {
         localStorage.setItem("token", data.token);
       }
 
-      if (data.user) {
-        localStorage.setItem("user", JSON.stringify(data.user));
+      if (data.account) {
+        localStorage.setItem("account", JSON.stringify(data.account));
       }
 
-      // window.location.href = "/dashboard";
+      if (data.account.nivel === "CLIENTE") {
+        window.location.href = "/dashboard";
+      }
+
+      if (data.account.nivel === "ADMIN") {
+        window.location.href = "/panel";
+      }
     } catch (error) {
       console.error(error);
       toast.error("Não foi possível conectar ao servidor.");
@@ -114,7 +119,7 @@ function Login() {
 
             <div className="flex items-center justify-between pt-1">
               <Link to="/cadastro">Cadastre-se</Link>
-              
+
               <button
                 type="button"
                 className="text-sm text-slate-400 hover:text-white transition"

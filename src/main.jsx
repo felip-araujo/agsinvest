@@ -2,6 +2,8 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
+import { ProtectedRoute } from "./services/ProtectedRoute.jsx";
+
 import "./index.css";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -9,6 +11,8 @@ import App from "./App.jsx";
 import Login from "./pages/Login.jsx";
 import { Cadastro } from "./pages/Cadastro.jsx";
 import { Simulacao } from "./pages/Simulacao.jsx";
+import { ClienteDashboard } from "./dashboards/clienteDashboard.jsx";
+import { AdminDashboard } from "./dashboards/adminDashboard.jsx";
 
 const router = createBrowserRouter([
   {
@@ -37,7 +41,39 @@ const router = createBrowserRouter([
     children: [
       {
         path: "simulacao",
-        element: <Simulacao />,
+        element: (
+          <ProtectedRoute allowedRoles={["CLIENTE", "ADMIN"]}>
+            <Simulacao />,
+          </ProtectedRoute>
+        ),
+      },
+    ],
+  },
+  {
+    path: "/",
+    element: <App />,
+    children: [
+      {
+        path: "dashboard",
+        element: (
+          <ProtectedRoute allowedRoles={["CLIENTE"]}>
+            <ClienteDashboard />,
+          </ProtectedRoute>
+        ),
+      },
+    ],
+  },
+  {
+    path: "/",
+    element: <App />,
+    children: [
+      {
+        path: "panel",
+        element: (
+          <ProtectedRoute allowedRoles={["ADMIN"]}>
+            <AdminDashboard />,
+          </ProtectedRoute>
+        ),
       },
     ],
   },

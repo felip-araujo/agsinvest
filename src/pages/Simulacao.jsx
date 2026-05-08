@@ -3,6 +3,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import { API_URL } from "../services/ApiUrl";
+import { Nav } from "../elements/Nav";
 
 export function Simulacao() {
   const [tipo, setTipo] = useState("simples");
@@ -336,6 +337,7 @@ export function Simulacao() {
           </div>
         </div>
       </section>
+      <Nav />
     </main>
-  );
+  )
 }
