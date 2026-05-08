@@ -41,7 +41,7 @@ export function ClienteDashboard() {
           <div className="flex items-center justify-between gap-4">
             <div>
               <p className="text-xs uppercase tracking-[0.22em] text-slate-500">
-                Painel do cliente
+                Painel do Investidor
               </p>
 
               <h1 className="mt-2 text-2xl md:text-4xl font-semibold tracking-[-0.04em] text-white">

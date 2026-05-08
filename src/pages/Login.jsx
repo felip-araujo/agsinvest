@@ -1,12 +1,15 @@
 import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Link } from "react-router-dom";
 import { API_URL } from "../services/ApiUrl";
+import { Logo } from "../elements/Logo";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  const [mostrarSenha, setMostrarSenha] = useState(false);
   const [loading, setLoading] = useState(false);
 
   async function handleLogin(e) {
@@ -67,23 +70,16 @@ function Login() {
     <main className="min-h-screen relative overflow-hidden bg-[#070A0F] flex items-center justify-center px-4 font-['Gotham','Inter','Montserrat',sans-serif]">
       <ToastContainer position="top-right" autoClose={3000} theme="dark" />
 
-      {/* Efeitos de fundo */}
       <div className="absolute top-[-120px] left-[-120px] w-[320px] h-[320px] bg-blue-600/20 rounded-full blur-[100px]" />
       <div className="absolute bottom-[-140px] right-[-120px] w-[360px] h-[360px] bg-cyan-500/10 rounded-full blur-[120px]" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.06),transparent_35%)]" />
 
       <section className="relative w-full max-w-[430px]">
         <div className="mb-8 text-center">
-          {/* <div className="mx-auto mb-5 w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center shadow-2xl">
-            <span className="text-white text-xl font-semibold">Ags Invest</span>
-          </div> */}
+          <Logo />
 
-          <h1 className="text-3xl md:text-4xl font-semibold tracking-[-0.04em] text-white">
-            Acessar sistema
-          </h1>
-
-          <p className="text-sm text-slate-400 mt-3 leading-relaxed">
-            Entre com suas credenciais para continuar no painel.
+          <p className="text-sm text-slate-400 mt-5 leading-relaxed">
+            Faça login para acessar o painel de investimentos.
           </p>
         </div>
 
@@ -99,6 +95,7 @@ function Login() {
                 placeholder="seuemail@exemplo.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
                 className="w-full rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3.5 text-white placeholder:text-slate-600 outline-none transition-all duration-300 focus:border-blue-400/70 focus:bg-white/[0.07] focus:ring-4 focus:ring-blue-500/10"
               />
             </div>
@@ -108,17 +105,38 @@ function Login() {
                 Senha
               </label>
 
-              <input
-                type="password"
-                placeholder="Digite sua senha"
-                value={senha}
-                onChange={(e) => setSenha(e.target.value)}
-                className="w-full rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3.5 text-white placeholder:text-slate-600 outline-none transition-all duration-300 focus:border-blue-400/70 focus:bg-white/[0.07] focus:ring-4 focus:ring-blue-500/10"
-              />
+              <div className="relative">
+                <input
+                  type={mostrarSenha ? "text" : "password"}
+                  placeholder="Digite sua senha"
+                  value={senha}
+                  onChange={(e) => setSenha(e.target.value)}
+                  autoComplete="current-password"
+                  className="w-full rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3.5 pr-12 text-white placeholder:text-slate-600 outline-none transition-all duration-300 focus:border-blue-400/70 focus:bg-white/[0.07] focus:ring-4 focus:ring-blue-500/10"
+                />
+
+                <button
+                  type="button"
+                  onClick={() => setMostrarSenha((prev) => !prev)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white transition"
+                  aria-label={mostrarSenha ? "Ocultar senha" : "Mostrar senha"}
+                >
+                  {mostrarSenha ? (
+                    <EyeOff size={20} strokeWidth={2} />
+                  ) : (
+                    <Eye size={20} strokeWidth={2} />
+                  )}
+                </button>
+              </div>
             </div>
 
             <div className="flex items-center justify-between pt-1">
-              <Link to="/cadastro">Cadastre-se</Link>
+              <Link
+                to="/cadastro"
+                className="text-sm text-slate-400 hover:text-white transition"
+              >
+                Cadastre-se
+              </Link>
 
               <button
                 type="button"
@@ -134,7 +152,7 @@ function Login() {
               className="group relative w-full overflow-hidden rounded-2xl bg-white text-[#070A0F] font-semibold py-3.5 mt-2 transition-all duration-300 hover:bg-slate-200 disabled:opacity-60 disabled:cursor-not-allowed"
             >
               <span className="relative z-10">
-                {loading ? "Entrando..." : "Entrar no sistema"}
+                {loading ? "Entrando..." : "Entrar"}
               </span>
 
               <div className="absolute inset-0 translate-y-full bg-gradient-to-r from-blue-500 to-cyan-400 transition-transform duration-300 group-hover:translate-y-0" />

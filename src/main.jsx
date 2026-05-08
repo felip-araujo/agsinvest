@@ -13,6 +13,8 @@ import { Cadastro } from "./pages/Cadastro.jsx";
 import { Simulacao } from "./pages/Simulacao.jsx";
 import { ClienteDashboard } from "./dashboards/clienteDashboard.jsx";
 import { AdminDashboard } from "./dashboards/adminDashboard.jsx";
+import { Perfil } from "./pages/Perfil.jsx";
+import { EmDesenvolvimento } from "./pages/EmDesenvolvimento.jsx";
 
 const router = createBrowserRouter([
   {
@@ -32,6 +34,16 @@ const router = createBrowserRouter([
       {
         path: "cadastro",
         element: <Cadastro />,
+      },
+    ],
+  },
+  {
+    path: "/",
+    element: <App />,
+    children: [
+      {
+        path: "perfil",
+        element: <Perfil />,
       },
     ],
   },
@@ -72,6 +84,34 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute allowedRoles={["ADMIN"]}>
             <AdminDashboard />,
+          </ProtectedRoute>
+        ),
+      },
+    ],
+  },
+  {
+    path: "/",
+    element: <App />,
+    children: [
+      {
+        path: "contratos",
+        element: (
+          <ProtectedRoute allowedRoles={["CLIENTE"]}>
+            <EmDesenvolvimento />
+          </ProtectedRoute>
+        ),
+      },
+    ],
+  },
+  {
+    path: "/",
+    element: <App />,
+    children: [
+      {
+        path: "resgates",
+        element: (
+          <ProtectedRoute allowedRoles={["CLIENTE"]}>
+            <EmDesenvolvimento />
           </ProtectedRoute>
         ),
       },

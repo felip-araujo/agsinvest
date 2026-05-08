@@ -61,9 +61,7 @@ export function Cadastro() {
     try {
       setLoading(true);
 
-      const endpoint = isUser
-        ? `${API_URL}/users`
-        : `${API_URL}/empresas`;
+      const endpoint = isUser ? `${API_URL}/users` : `${API_URL}/empresas`;
 
       const payload = isUser
         ? {
@@ -101,9 +99,7 @@ export function Cadastro() {
       }
 
       toast.success(
-        isUser
-          ? "Usuário criado com sucesso!"
-          : "Empresa criada com sucesso!"
+        isUser ? "Usuário criado com sucesso!" : "Empresa criada com sucesso!",
       );
 
       setFormData({
@@ -139,11 +135,11 @@ export function Cadastro() {
 
       <section className="relative w-full max-w-2xl">
         <div className="mb-8 text-center">
-          
-
-          <h1 className="text-3xl md:text-4xl font-semibold tracking-[-0.04em] text-white">
-            Criar conta
-          </h1>
+          <img
+            src="/agsinvest-w.png"
+            alt="Logotipo"
+            className="mx-auto max-w-[190px] md:max-w-[220px] h-auto object-contain"
+          />
 
           <p className="text-sm text-slate-400 mt-3 leading-relaxed">
             Escolha o tipo de cadastro e preencha seus dados para começar.
@@ -229,9 +225,7 @@ export function Cadastro() {
                 <input
                   type="text"
                   name={tipoCadastro === "USER" ? "cpf" : "cnpj"}
-                  value={
-                    tipoCadastro === "USER" ? formData.cpf : formData.cnpj
-                  }
+                  value={tipoCadastro === "USER" ? formData.cpf : formData.cnpj}
                   onChange={handleChange}
                   placeholder={
                     tipoCadastro === "USER"
@@ -345,8 +339,8 @@ export function Cadastro() {
                 {loading
                   ? "Criando conta..."
                   : tipoCadastro === "USER"
-                  ? "Criar conta de usuário"
-                  : "Criar conta de empresa"}
+                    ? "Criar conta "
+                    : "Criar conta PJ"}
               </span>
 
               <div className="absolute inset-0 translate-y-full bg-gradient-to-r from-blue-500 to-cyan-400 transition-transform duration-300 group-hover:translate-y-0" />
@@ -356,7 +350,10 @@ export function Cadastro() {
 
         <p className="text-center text-xs text-slate-600 mt-6">
           Já possui uma conta?{" "}
-          <a href="/login" className="text-slate-400 hover:text-white transition">
+          <a
+            href="/login"
+            className="text-slate-400 hover:text-white transition"
+          >
             Entrar no sistema
           </a>
         </p>
@@ -364,4 +361,3 @@ export function Cadastro() {
     </main>
   );
 }
-
