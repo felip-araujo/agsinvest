@@ -2,6 +2,8 @@ import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+import { API_URL } from "../services/ApiUrl";
+
 export function Simulacao() {
   const [tipo, setTipo] = useState("simples");
   const [valor, setValor] = useState("");
@@ -40,8 +42,8 @@ export function Simulacao() {
 
       const endpoint =
         tipo === "simples"
-          ? "http://localhost:3000/simulacao"
-          : "http://localhost:3000/simulacao/composto";
+          ? `${API_URL}/simulacao`
+          : `${API_URL}/simulacao/composto`;
 
       const payload =
         tipo === "simples"
@@ -91,8 +93,6 @@ export function Simulacao() {
 
       <section className="relative w-full max-w-5xl mx-auto">
         <div className="mb-8 text-center">
-         
-
           <h1 className="text-3xl md:text-4xl font-semibold tracking-[-0.04em] text-white">
             Simulação de investimento
           </h1>
@@ -228,9 +228,7 @@ export function Simulacao() {
                     Resultado
                   </p>
 
-                  <h2 className="text-2xl font-semibold mt-2">
-                    Juros simples
-                  </h2>
+                  <h2 className="text-2xl font-semibold mt-2">Juros simples</h2>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-4">
