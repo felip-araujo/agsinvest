@@ -184,8 +184,7 @@ export function Simulacao() {
                   </p>
 
                   <p className="text-sm text-slate-500 mt-1 leading-relaxed">
-                    O sistema calculará os resultados para 1, 2, 4 e 5 anos com
-                    base na taxa diária configurada na API.
+                    O sistema calculará os resultados para 1, 2, 4 e 5 anos.
                   </p>
                 </div>
               )}
@@ -339,5 +338,5 @@ export function Simulacao() {
       </section>
       <Nav />
     </main>
-  )
+  );
 }

@@ -7,6 +7,7 @@ import {
   IdCard,
   Save,
   Lock,
+  Building2,
 } from "lucide-react";
 import { ToastContainer, toast } from "react-toastify";
 import { API_URL } from "../services/ApiUrl";
@@ -16,13 +17,19 @@ export function Perfil() {
   const account = JSON.parse(localStorage.getItem("account"));
   const token = localStorage.getItem("token");
 
+  const isCompany = account?.tipo === "COMPANY";
+
+  const endpointBase = isCompany ? "empresas" : "users";
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
   const [formData, setFormData] = useState({
     nome: "",
+    representante: "",
     email: "",
     cpf: "",
+    cnpj: "",
     gender: "",
     telefone: "",
     senha: "",
@@ -38,7 +45,7 @@ export function Perfil() {
   }
 
   function limparNumeros(valor) {
-    return String(valor).replace(/\D/g, "");
+    return String(valor || "").replace(/\D/g, "");
   }
 
   async function buscarPerfil() {
@@ -50,7 +57,7 @@ export function Perfil() {
 
       setLoading(true);
 
-      const response = await fetch(`${API_URL}/users/${account.id}`, {
+      const response = await fetch(`${API_URL}/${endpointBase}/${account.id}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -66,8 +73,10 @@ export function Perfil() {
 
       setFormData({
         nome: data.nome || "",
+        representante: data.representante || "",
         email: data.email || "",
         cpf: data.cpf || "",
+        cnpj: data.cnpj || "",
         gender: data.gender || "",
         telefone: data.telefone || "",
         senha: "",
@@ -83,34 +92,39 @@ export function Perfil() {
   async function handleSubmit(e) {
     e.preventDefault();
 
-    if (
-      !formData.nome &&
-      !formData.email &&
-      !formData.cpf &&
-      !formData.telefone &&
-      !formData.gender &&
-      !formData.senha
-    ) {
-      toast.warning("Altere pelo menos um campo antes de salvar.");
+    if (!formData.nome) {
+      toast.warning(
+        isCompany
+          ? "O nome da empresa não pode ficar vazio."
+          : "O nome não pode ficar vazio."
+      );
       return;
     }
 
     try {
       setSaving(true);
 
-      const payload = {
-        nome: formData.nome,
-        email: formData.email,
-        cpf: limparNumeros(formData.cpf),
-        gender: formData.gender,
-        telefone: limparNumeros(formData.telefone),
-      };
+      const payload = isCompany
+        ? {
+            nome: formData.nome,
+            representante: formData.representante,
+            email: formData.email,
+            cnpj: limparNumeros(formData.cnpj),
+            telefone: limparNumeros(formData.telefone),
+          }
+        : {
+            nome: formData.nome,
+            email: formData.email,
+            cpf: limparNumeros(formData.cpf),
+            gender: formData.gender,
+            telefone: limparNumeros(formData.telefone),
+          };
 
       if (formData.senha) {
         payload.senha = formData.senha;
       }
 
-      const response = await fetch(`${API_URL}/users/${account.id}`, {
+      const response = await fetch(`${API_URL}/${endpointBase}/${account.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -122,18 +136,20 @@ export function Perfil() {
       const data = await response.json();
 
       if (!response.ok) {
-        toast.error(data.message || "Erro ao atualizar perfil.");
+        toast.error(data.error || data.message || "Erro ao atualizar perfil.");
         return;
       }
 
       toast.success("Perfil atualizado com sucesso!");
 
-      if (data.user) {
+      const updatedData = data.user || data.company;
+
+      if (updatedData) {
         const updatedAccount = {
           ...account,
-          nome: data.user.nome,
-          email: data.user.email,
-          nivel: data.user.nivel,
+          nome: updatedData.nome,
+          email: updatedData.email,
+          nivel: updatedData.nivel,
         };
 
         localStorage.setItem("account", JSON.stringify(updatedAccount));
@@ -172,32 +188,37 @@ export function Perfil() {
           <div className="mt-3 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
             <div>
               <h1 className="text-2xl md:text-4xl font-semibold tracking-[-0.04em] text-white">
-                Perfil do usuário
+                {isCompany ? "Perfil da empresa" : "Perfil do usuário"}
               </h1>
 
               <p className="text-sm text-slate-400 mt-2 max-w-2xl">
-                Visualize e atualize seus dados pessoais de acesso ao sistema.
+                {isCompany
+                  ? "Visualize e atualize os dados cadastrais da empresa."
+                  : "Visualize e atualize seus dados pessoais de acesso ao sistema."}
               </p>
             </div>
 
-            {account?.nivel !== "CLIENTE" && (
+            {account?.nivel && account.nivel !== "CLIENTE" && (
               <div className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-slate-300">
                 <BadgeCheck size={18} />
-                {account?.nivel}
+                {account.nivel}
               </div>
             )}
-            
           </div>
         </header>
 
         <div className="grid lg:grid-cols-[360px_1fr] gap-6">
           <aside className="bg-white/[0.035] border border-white/10 rounded-[28px] shadow-2xl backdrop-blur-xl p-6 h-fit">
             <div className="w-20 h-20 rounded-[24px] bg-white text-[#070A0F] flex items-center justify-center">
-              <User size={34} strokeWidth={2} />
+              {isCompany ? (
+                <Building2 size={34} strokeWidth={2} />
+              ) : (
+                <User size={34} strokeWidth={2} />
+              )}
             </div>
 
             <h2 className="mt-6 text-2xl font-semibold tracking-[-0.04em]">
-              {formData.nome || "Usuário"}
+              {formData.nome || (isCompany ? "Empresa" : "Usuário")}
             </h2>
 
             <p className="text-sm text-slate-400 mt-2 break-all">
@@ -207,17 +228,27 @@ export function Perfil() {
             <div className="mt-6 space-y-3">
               <ProfileInfo
                 icon={<IdCard size={18} />}
-                label="CPF"
-                value={formData.cpf || "Não informado"}
+                label={isCompany ? "CNPJ" : "CPF"}
+                value={
+                  isCompany
+                    ? formData.cnpj || "Não informado"
+                    : formData.cpf || "Não informado"
+                }
               />
+
+              {isCompany && (
+                <ProfileInfo
+                  icon={<User size={18} />}
+                  label="Representante"
+                  value={formData.representante || "Não informado"}
+                />
+              )}
 
               <ProfileInfo
                 icon={<Phone size={18} />}
                 label="Telefone"
                 value={formData.telefone || "Não informado"}
               />
-
-              
             </div>
           </aside>
 
@@ -240,12 +271,14 @@ export function Perfil() {
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="grid md:grid-cols-2 gap-5">
                   <InputField
-                    label="Nome completo"
+                    label={isCompany ? "Nome da empresa" : "Nome completo"}
                     name="nome"
                     value={formData.nome}
                     onChange={handleChange}
-                    icon={<User size={18} />}
-                    placeholder="Digite seu nome"
+                    icon={isCompany ? <Building2 size={18} /> : <User size={18} />}
+                    placeholder={
+                      isCompany ? "Digite o nome da empresa" : "Digite seu nome"
+                    }
                   />
 
                   <InputField
@@ -259,14 +292,27 @@ export function Perfil() {
                   />
                 </div>
 
+                {isCompany && (
+                  <InputField
+                    label="Representante"
+                    name="representante"
+                    value={formData.representante}
+                    onChange={handleChange}
+                    icon={<User size={18} />}
+                    placeholder="Nome do representante"
+                  />
+                )}
+
                 <div className="grid md:grid-cols-2 gap-5">
                   <InputField
-                    label="CPF"
-                    name="cpf"
-                    value={formData.cpf}
+                    label={isCompany ? "CNPJ" : "CPF"}
+                    name={isCompany ? "cnpj" : "cpf"}
+                    value={isCompany ? formData.cnpj : formData.cpf}
                     onChange={handleChange}
                     icon={<IdCard size={18} />}
-                    placeholder="000.000.000-00"
+                    placeholder={
+                      isCompany ? "00.000.000/0000-00" : "000.000.000-00"
+                    }
                   />
 
                   <InputField
@@ -279,32 +325,34 @@ export function Perfil() {
                   />
                 </div>
 
-                <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-3 uppercase tracking-[0.18em]">
-                    Gênero
-                  </label>
+                {!isCompany && (
+                  <div>
+                    <label className="block text-xs font-medium text-slate-300 mb-3 uppercase tracking-[0.18em]">
+                      Gênero
+                    </label>
 
-                  <div className="grid md:grid-cols-2 gap-3">
-                    <GenderOption
-                      label="Masculino"
-                      value="Masculino"
-                      checked={formData.gender === "Masculino"}
-                      onChange={handleChange}
-                    />
+                    <div className="grid md:grid-cols-2 gap-3">
+                      <GenderOption
+                        label="Masculino"
+                        value="Masculino"
+                        checked={formData.gender === "Masculino"}
+                        onChange={handleChange}
+                      />
 
-                    <GenderOption
-                      label="Feminino"
-                      value="Feminino"
-                      checked={formData.gender === "Feminino"}
-                      onChange={handleChange}
-                    />
+                      <GenderOption
+                        label="Feminino"
+                        value="Feminino"
+                        checked={formData.gender === "Feminino"}
+                        onChange={handleChange}
+                      />
+                    </div>
                   </div>
-                </div>
+                )}
 
                 <InputField
                   label="Nova senha"
                   name="senha"
-                  type="password"
+                  type="text"
                   value={formData.senha}
                   onChange={handleChange}
                   icon={<Lock size={18} />}
@@ -367,6 +415,7 @@ function InputField({
           value={value}
           onChange={onChange}
           placeholder={placeholder}
+          autoComplete={type === "password" ? "new-password" : "off"}
           className="w-full rounded-2xl border border-white/10 bg-white/[0.04] pl-12 pr-4 py-3.5 text-white placeholder:text-slate-600 outline-none transition-all duration-300 focus:border-blue-400/70 focus:bg-white/[0.07] focus:ring-4 focus:ring-blue-500/10"
         />
       </div>

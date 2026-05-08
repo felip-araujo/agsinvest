@@ -56,8 +56,11 @@ function Login() {
       }
 
       if (data.account.nivel === "ADMIN") {
-        window.location.href = "/panel";
+        window.location.href = "/dashboard";
       }
+
+
+      
     } catch (error) {
       console.error(error);
       toast.error("Não foi possível conectar ao servidor.");

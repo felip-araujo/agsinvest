@@ -320,7 +320,7 @@ export function Cadastro() {
                 </label>
 
                 <input
-                  type="password"
+                  type="text"
                   name="senha"
                   value={formData.senha}
                   onChange={handleChange}
